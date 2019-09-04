@@ -19,3 +19,4 @@ public class About extends AppCompatActivity {
     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.github.com/cubeqw"));
     startActivity(browserIntent);}
 }
+

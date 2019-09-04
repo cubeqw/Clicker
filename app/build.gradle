@@ -4,7 +4,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "ya.cube.clicker"
+        applicationId "ru.cube.clicker"
         minSdkVersion 15
         targetSdkVersion 29
         versionCode 1
@@ -13,7 +13,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -36,6 +36,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'com.google.zxing:core:2.2'
     implementation 'com.embarkmobile:zxing-android-minimal:1.2.1@aar'
-    compile 'me.dm7.barcodescanner:zxing:1.9'
+    implementation 'me.dm7.barcodescanner:zxing:1.9'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
 }
