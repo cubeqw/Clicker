@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +34,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
 
     EditText editText;
     TextView textView;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editText=findViewById(R.id.url);
+        editText.setOnEditorActionListener(this);
         textView=findViewById(R.id.short_url);
         button=findViewById(R.id.button);
         Intent intent = getIntent();
@@ -71,6 +74,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_SEND) {
+            try {
+                generate();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return true;
+        }
+        return false;
+    }
+
     public void onClick(View v) throws UnsupportedEncodingException {
         button.setText(getResources().getString(R.string.wait));
         generate();
@@ -93,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
                         connect=true;
                         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                         ClipData clip = ClipData.newPlainText("",short_url);
-                        clipboard.setPrimaryClip(clip);}
-                    } catch (IOException e) {
+                        clipboard.setPrimaryClip(clip);}}
+                     catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
@@ -145,13 +160,20 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
         setShort_url(url);
+
         try {
             Thread.sleep(1000);
         } catch(InterruptedException e) {
         }
+
         if(connect){
-            textView.setText(short_url);}
+            if(short_url.toCharArray().length>50){
+                String s = getResources().getString(R.string.inavid_url);
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();}
+            else{
+            textView.setText(short_url);}}
         QRCodeWriter writer = new QRCodeWriter();
         try {
             try {

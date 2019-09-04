@@ -21,11 +21,12 @@
             android:id="@+id/url"
             android:layout_margin="15dp"
             android:inputType="textUri"
-            android:imeOptions="actionSend"/>
+            android:imeOptions="actionSend" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/click"
+            android:layout_margin="15dp"
             android:id="@+id/button"
             android:textAllCaps="false"
             android:background="#FFFFFF"
