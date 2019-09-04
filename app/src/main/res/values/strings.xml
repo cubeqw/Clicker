@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Clicker</string>
+    <string name="annotation">Quite often, when communicating on the Internet, people send each other links. Sometimes these links are long. Sometimes very very long. But almost always-too long. In order to get rid of this problem, this app was created. Yes, I know there are thousands of them, but this one is better!  And then everything is simple: insert a link in the input field, click \"Click\" and get a short, very short URL.</string>
+    <string name="short_annotation">Serious short URL</string>
+    <string name="hint">Paste your URL</string>
+    <string name="click">Click!✂</string>
+    <string name="copyright">powered by Yandex</string>
+    <string name="inavid_url">Error: Invalid URL!</string>
+    <string name="about">About</string>
+    <string name="qr_scan">QR Scanner</string>
+    <string name="clip">Save to Clipboard</string>
+    <string name="no_net">No Internet Connection! Parse text to QR</string>
+    <string name="visit">Visit</string>
+    <string name="copy">Copy</string>
+    <string name="share">Сlick here to share the link</string>
+    <string name="wait">Wait...</string>
+</resources>
