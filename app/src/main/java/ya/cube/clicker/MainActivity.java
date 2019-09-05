@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     EditText editText;
     TextView textView;
     Button button;
-    String short_url;
+    String short_url="";
     String api="https://clck.ru/--?url=";
     boolean connect;
     String getUrl;
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         textView=findViewById(R.id.short_url);
         button=findViewById(R.id.button);
         Intent intent = getIntent();
+        short_url=getResources().getString(R.string.wait);
         String action = intent.getAction();
         String type = intent.getType();
         if (Intent.ACTION_SEND.equals(action) && type != null) {
@@ -87,8 +88,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     public void onClick(View v) throws UnsupportedEncodingException {
-        button.setText(getResources().getString(R.string.wait));
         generate();
+        textView.setText(short_url);
         }
 
     public String setShort_url(final String url){
@@ -101,14 +102,17 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                     try {
                         String responsec = (String) hc.execute(http, response);
                         short_url = responsec;
-                        if(short_url.equals("")){
+                        while(short_url.equals("")){
                             connect=false;
+                            break;
                         }
-                        else{
+                        while(!short_url.equals("")){
                         connect=true;
+                        runThread();
                         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                         ClipData clip = ClipData.newPlainText("",short_url);
-                        clipboard.setPrimaryClip(clip);}}
+                        clipboard.setPrimaryClip(clip);
+                        break;}}
                      catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -149,7 +153,6 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
     }
     public void generate() throws UnsupportedEncodingException {
-        button.setText(getResources().getString(R.string.wait));
         if (getUrl != null) {
             url =URLEncoder.encode(getUrl, "UTF-8");
             editText.setText(url);
@@ -163,11 +166,6 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 
         setShort_url(url);
 
-        try {
-            Thread.sleep(1000);
-        } catch(InterruptedException e) {
-        }
-
         if(connect){
             if(short_url.toCharArray().length>50){
                 String s = getResources().getString(R.string.inavid_url);
@@ -175,9 +173,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
             else{
             textView.setText(short_url);}}
         QRCodeWriter writer = new QRCodeWriter();
-        try {
             try {
-                if (connect) {
                     BitMatrix bitMatrix = writer.encode(short_url, BarcodeFormat.QR_CODE, 512, 512);
                     int width = bitMatrix.getWidth();
                     int height = bitMatrix.getHeight();
@@ -187,29 +183,16 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                             bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
                         }
                     }
-                    ((ImageView) findViewById(R.id.img_result_qr)).setImageBitmap(bmp);
-                }
-                else {
-                    String s=getResources().getString(R.string.no_net);
-                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-                    BitMatrix bitMatrix = writer.encode(url, BarcodeFormat.QR_CODE, 512, 512);
-                    int width = bitMatrix.getWidth();
-                    int height = bitMatrix.getHeight();
-                    Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-                    for (int x = 0; x < width; x++) {
-                        for (int y = 0; y < height; y++) {
-                            bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
-                        }
-                    }
-                    ((ImageView) findViewById(R.id.img_result_qr)).setImageBitmap(bmp);
-                }
-            } catch(WriterException e){
-                e.printStackTrace();
+                    ((ImageView) findViewById(R.id.img_result_qr)).setImageBitmap(bmp);} catch (WriterException ex) {
+                ex.printStackTrace();
             }
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-        button.setText(getResources().getString(R.string.click));
-
+    }
+    private void runThread() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText(short_url);
+            }
+        });
     }
 }
