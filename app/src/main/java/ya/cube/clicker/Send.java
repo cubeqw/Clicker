@@ -1,4 +1,4 @@
-package ru.cube.clicker;
+package ya.cube.clicker;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -29,10 +29,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
-import ya.cube.clicker.About;
-import ya.cube.clicker.QR_Scan;
-import ya.cube.clicker.R;
 
 public class Send extends AppCompatActivity {
     TextView textView;
