@@ -29,6 +29,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Send extends AppCompatActivity {
     TextView textView;
@@ -37,6 +39,8 @@ public class Send extends AppCompatActivity {
     boolean connect;
     String getUrl;
     String url;
+    int time=3;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,7 @@ public class Send extends AppCompatActivity {
             handleSendText(intent);
         }
     }
+
 }
 
     void handleSendText(Intent intent) {
@@ -60,6 +65,7 @@ public class Send extends AppCompatActivity {
             getUrl=sharedText;
             try {
                 generate();
+                startTimer();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -164,6 +170,34 @@ public class Send extends AppCompatActivity {
                 textView.setText(short_url);
             }
         });
+    }
+    public void startTimer() {
+        timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(time>0){
+                            time--;
+                        }
+                        if(time==0){
+                            if(short_url.equals(getResources().getString(R.string.wait))){
+                                String s=getResources().getString(R.string.no_net);
+                                Toast.makeText(getApplicationContext(),s, Toast.LENGTH_SHORT).show();
+                                close();
+                                time--;
+                            }
+                        }
+                    }
+                });
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask, 0, 1000);
+    }
+    public void close(){
+        this.finish();
     }
 }
 

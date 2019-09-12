@@ -1,8 +1,5 @@
 package ya.cube.clicker;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -25,23 +22,20 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
+public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     EditText editText;
     TextView textView;
     Button button;
+	Button share;
     String short_url="";
-    String api="https://clck.ru/--?url=";
-    boolean connect;
     String getUrl;
     String url;
     @Override
@@ -52,28 +46,9 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         editText.setOnEditorActionListener(this);
         textView=findViewById(R.id.short_url);
         button=findViewById(R.id.button);
-        Intent intent = getIntent();
+		share=findViewById(R.id.button_share);
+		share.setVisibility(View.INVISIBLE);
         short_url=getResources().getString(R.string.wait);
-        String action = intent.getAction();
-        String type = intent.getType();
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if ("text/plain".equals(type)) {
-                handleSendText(intent);
-            }
-        }
-    }
-
-    void handleSendText(Intent intent) {
-        String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-        if (sharedText != null) {
-            getUrl=sharedText;
-            try {
-                generate();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEND) {
@@ -87,42 +62,28 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         return false;
     }
 
-    public void onClick(View v) throws UnsupportedEncodingException {
+    public void onClick(View v) throws IOException {
         generate();
         textView.setText(short_url);
         }
 
-    public String setShort_url(final String url){
+    public String setShort_url() {
         if (!url.isEmpty()) {
-            new Thread(new Runnable() {
-                public void run() {
-                    DefaultHttpClient hc = new DefaultHttpClient();
-                    ResponseHandler response = new BasicResponseHandler();
-                    HttpGet http = new HttpGet(api + url);
-                    try {
-                        String responsec = (String) hc.execute(http, response);
-                        short_url = responsec;
-                        while(short_url.equals("")){
-                            connect=false;
-                            break;
-                        }
-                        while(!short_url.equals("")){
-                        connect=true;
-                        runThread();
-                        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText("",short_url);
-                        clipboard.setPrimaryClip(clip);
-                        break;}}
-                     catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            App.getApi().url(url).enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    short_url=(response.body());
                 }
-            }).start();
-            String s = getResources().getString(R.string.clip);
-            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-            return url;
-
-  }else{
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    String s = getResources().getString(R.string.no_net);
+                    Toast.makeText(MainActivity.this,s , Toast.LENGTH_SHORT).show();
+                    close();
+                }
+            });
+            return short_url;
+        }
+  else {
             String s = getResources().getString(R.string.inavid_url);
             Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
             return "";
@@ -163,15 +124,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                 e.printStackTrace();
             }
         }
-
-        setShort_url(url);
-
-        if(connect){
-            if(short_url.toCharArray().length>50){
-                String s = getResources().getString(R.string.inavid_url);
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();}
-            else{
-            textView.setText(short_url);}}
+            setShort_url();
+		if(!short_url.equals(getResources().getString(R.string.wait))){
         QRCodeWriter writer = new QRCodeWriter();
             try {
                     BitMatrix bitMatrix = writer.encode(short_url, BarcodeFormat.QR_CODE, 512, 512);
@@ -186,13 +140,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                     ((ImageView) findViewById(R.id.img_result_qr)).setImageBitmap(bmp);} catch (WriterException ex) {
                 ex.printStackTrace();
             }
-    }
-    private void runThread() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText(short_url);
-            }
-        });
-    }
+    }}
+	public void close(){
+		this.finish();
+	}
 }

@@ -10,9 +10,10 @@
     <string name="about">О приложении</string>
     <string name="qr_scan">Сканировать QR-код</string>
     <string name="clip">Ссылка скопирована</string>
-    <string name="no_net">Нет подключения к интернету! Перевод текста в QR-код</string>
+    <string name="no_net">Нет подключения к интернету!</string>
     <string name="copy">Копировать</string>
     <string name="visit">Перейти</string>
     <string name="share">Нажми здесь, чтобы поделиться ссылкой</string>
     <string name="wait">Подождите</string>
+    <string name="no_camera">Дайте разрешение на камеру для сканирования QR-кода</string>
 </resources>

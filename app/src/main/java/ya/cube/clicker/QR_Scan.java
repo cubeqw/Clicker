@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -59,39 +58,14 @@ public class QR_Scan extends AppCompatActivity implements ZXingScannerView.Resul
 
                     boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
                     if (cameraAccepted){
-                        Toast.makeText(getApplicationContext(), "Permission Granted, Now you can access camera", Toast.LENGTH_LONG).show();
                     }else {
-                        Toast.makeText(getApplicationContext(), "Permission Denied, You cannot access and camera", Toast.LENGTH_LONG).show();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-                                showMessageOKCancel("You need to allow access to both the permissions",
-                                        new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{Manifest.permission.CAMERA},
-                                                            REQUEST_CAMERA);
-                                                }
-                                            }
-                                        });
-                                return;
-                            }
-                        }
+                        String s=getResources().getString(R.string.no_camera);
+                        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
         }
     }
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(QR_Scan.this)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -141,9 +115,10 @@ public class QR_Scan extends AppCompatActivity implements ZXingScannerView.Resul
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(result));
                 startActivity(browserIntent);}
                 catch (ActivityNotFoundException e){
+                    String sh="https://yandex.ru/search/?&text="+result;
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(sh));
+                    startActivity(browserIntent);
                     mScannerView.resumeCameraPreview(QR_Scan.this);
-                    String s = getResources().getString(R.string.inavid_url);
-                    Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
                 }
             }
         });
