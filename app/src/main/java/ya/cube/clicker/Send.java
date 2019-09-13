@@ -1,8 +1,5 @@
 package ya.cube.clicker;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -21,16 +18,13 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Timer;
-import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Send extends AppCompatActivity {
     TextView textView;
@@ -65,7 +59,6 @@ public class Send extends AppCompatActivity {
             getUrl=sharedText;
             try {
                 generate();
-                startTimer();
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -105,7 +98,7 @@ public class Send extends AppCompatActivity {
 
         }
 
-        setShort_url(url);
+        setShort_url();
 
         if(connect){
             if(short_url.toCharArray().length>50){
@@ -128,74 +121,29 @@ public class Send extends AppCompatActivity {
             ex.printStackTrace();
         }
     }
-    public String setShort_url(final String url){
-        if (!url.isEmpty()) {
-            new Thread(new Runnable() {
-                public void run() {
-                    DefaultHttpClient hc = new DefaultHttpClient();
-                    ResponseHandler response = new BasicResponseHandler();
-                    HttpGet http = new HttpGet(api + url);
-                    try {
-                        String responsec = (String) hc.execute(http, response);
-                        short_url = responsec;
-                        while(short_url.equals("")){
-                            connect=false;
-                            break;
-                        }
-                        while(!short_url.equals("")){
-                            connect=true;
-                            runThread();
-                            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData clip = ClipData.newPlainText("",short_url);
-                            clipboard.setPrimaryClip(clip);
-                            break;}}
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
-            String s = getResources().getString(R.string.clip);
-            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-            return url;
 
-        }else{
-            String s = getResources().getString(R.string.inavid_url);
-            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-            return "";
-        }}
-    private void runThread() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText(short_url);
-            }
-        });
-    }
-    public void startTimer() {
-        timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
+        public String setShort_url() {
+            if (!url.isEmpty()) {
+                App.getApi().url(url).enqueue(new Callback<String>() {
                     @Override
-                    public void run() {
-                        if(time>0){
-                            time--;
-                        }
-                        if(time==0){
-                            if(short_url.equals(getResources().getString(R.string.wait))){
-                                String s=getResources().getString(R.string.no_net);
-                                Toast.makeText(getApplicationContext(),s, Toast.LENGTH_SHORT).show();
-                                close();
-                                time--;
-                            }
-                        }
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        short_url=(response.body());
+                    }
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        String s = getResources().getString(R.string.no_net);
+                        Toast.makeText(Send.this,s , Toast.LENGTH_SHORT).show();
+                        close();
                     }
                 });
+                return short_url;
             }
-        };
-        timer.scheduleAtFixedRate(timerTask, 0, 1000);
-    }
+            else {
+                String s = getResources().getString(R.string.inavid_url);
+                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                return "";
+            }}
+
     public void close(){
         this.finish();
     }
