@@ -12,7 +12,8 @@
     <string name="no_net">No Internet Connection!</string>
     <string name="visit">Visit</string>
     <string name="copy">Copy</string>
-    <string name="share">Сlick here to share the link</string>
+    <string name="share">Share</string>
     <string name="wait">Wait...</string>
     <string name="no_camera">Give permission to the camera to scan the QR code</string>
+    <string name="flash">Flashlight</string>
 </resources>

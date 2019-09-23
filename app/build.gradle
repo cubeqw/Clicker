@@ -11,27 +11,10 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-  /*  buildTypes {
+  buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-*/
-    signingConfigs {
-        release {
-            storeFile file("C:\\Users\\pk200\\Clicker.jks")
-            storePassword "lama2490"
-            keyAlias "key0"
-            keyPassword "lama2490"
-        }
-
-        buildTypes {
-            release {
-                minifyEnabled true
-                signingConfig signingConfigs.release
-                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            }
         }
     }
 }

@@ -11,9 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,9 +18,20 @@
             android:layout_margin="15dp"
             android:gravity="center"
             android:textSize="30dp"
-            android:text="@string/share"
             android:onClick="onClickURL"
             android:textColor="@color/colorPrimary"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/share"
+            android:layout_margin="15dp"
+            android:id="@+id/button_share"
+            android:textAllCaps="false"
+            android:background="#FFFFFF"
+            android:textSize="25dp"
+            android:textColor="@color/colorAccent"
+            android:onClick="onClickURL"
+            />
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -30,8 +30,8 @@ public class QR_Scan extends AppCompatActivity implements ZXingScannerView.Resul
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTitle(getResources().getString(R.string.qr_scan));
         super.onCreate(savedInstanceState);
-
         mScannerView = new ZXingScannerView(this);
         setContentView(mScannerView);
         int currentapiVersion = android.os.Build.VERSION.SDK_INT;

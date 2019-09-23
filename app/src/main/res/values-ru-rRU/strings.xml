@@ -13,7 +13,8 @@
     <string name="no_net">Нет подключения к интернету!</string>
     <string name="copy">Копировать</string>
     <string name="visit">Перейти</string>
-    <string name="share">Нажми здесь, чтобы поделиться ссылкой</string>
+    <string name="share">Поделиться</string>
     <string name="wait">Подождите</string>
     <string name="no_camera">Дайте разрешение на камеру для сканирования QR-кода</string>
+    <string name="flash">Вспышка</string>
 </resources>

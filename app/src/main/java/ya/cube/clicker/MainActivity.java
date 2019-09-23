@@ -22,10 +22,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,10 +29,8 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     EditText editText;
     TextView textView;
-    Button button;
 	Button share;
     String short_url="";
-    String getUrl;
     String url;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,34 +39,33 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         editText=findViewById(R.id.url);
         editText.setOnEditorActionListener(this);
         textView=findViewById(R.id.short_url);
-        button=findViewById(R.id.button);
 		share=findViewById(R.id.button_share);
 		share.setVisibility(View.INVISIBLE);
         short_url=getResources().getString(R.string.wait);
     }
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEND) {
-            try {
-                generate();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+           setShort_url();
             return true;
         }
         return false;
     }
 
-    public void onClick(View v) throws IOException {
-        generate();
+    public void onClick(View v) {
+        setShort_url();
         textView.setText(short_url);
         }
 
-    public String setShort_url() {
+    public void setShort_url() {
+        url=editText.getText().toString();
         if (!url.isEmpty()) {
             App.getApi().url(url).enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     short_url=(response.body());
+                    textView.setText(short_url);
+                        generate();
+                    share.setVisibility(View.VISIBLE);
                 }
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
@@ -81,12 +74,10 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                     close();
                 }
             });
-            return short_url;
         }
   else {
             String s = getResources().getString(R.string.inavid_url);
             Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-            return "";
         }}
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -110,21 +101,10 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         Intent intent=new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, short_url);
-        startActivity(Intent.createChooser(intent, "Поделиться "));
+        startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
 
     }
-    public void generate() throws UnsupportedEncodingException {
-        if (getUrl != null) {
-            url =URLEncoder.encode(getUrl, "UTF-8");
-            editText.setText(url);
-        }else{
-            try {
-                url = URLEncoder.encode(editText.getText().toString(), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-            setShort_url();
+    public void generate() {
 		if(!short_url.equals(getResources().getString(R.string.wait))){
         QRCodeWriter writer = new QRCodeWriter();
             try {

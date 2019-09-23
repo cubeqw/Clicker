@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,19 +30,16 @@ import retrofit2.Response;
 public class Send extends AppCompatActivity {
     TextView textView;
     String short_url="";
-    String api="https://clck.ru/--?url=";
-    boolean connect;
-    String getUrl;
     String url;
-    int time=3;
-    private Timer timer;
-
+    Button share;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send);
         textView=findViewById(R.id.short_url);
         short_url=getResources().getString(R.string.wait);
+        share=findViewById(R.id.button_share);
+        share.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
     String action = intent.getAction();
     String type = intent.getType();
@@ -56,12 +54,8 @@ public class Send extends AppCompatActivity {
     void handleSendText(Intent intent) {
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (sharedText != null) {
-            getUrl=sharedText;
-            try {
-                generate();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+            url=sharedText;
+            setShort_url();
         }
 
     }
@@ -88,61 +82,48 @@ public class Send extends AppCompatActivity {
         Intent intent=new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, short_url);
-        startActivity(Intent.createChooser(intent, "Поделиться "));
-
+        startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
     }
-    public void generate() throws UnsupportedEncodingException {
-        if (getUrl != null) {
-            url =URLEncoder.encode(getUrl, "UTF-8");
-        }else{
-
-        }
-
-        setShort_url();
-
-        if(connect){
-            if(short_url.toCharArray().length>50){
-                String s = getResources().getString(R.string.inavid_url);
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();}
-            else{
-                textView.setText(short_url);}}
-        QRCodeWriter writer = new QRCodeWriter();
-        try {
-            BitMatrix bitMatrix = writer.encode(short_url, BarcodeFormat.QR_CODE, 512, 512);
-            int width = bitMatrix.getWidth();
-            int height = bitMatrix.getHeight();
-            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+    public void generate() {
+        if(!short_url.equals(getResources().getString(R.string.wait))){
+            QRCodeWriter writer = new QRCodeWriter();
+            try {
+                BitMatrix bitMatrix = writer.encode(short_url, BarcodeFormat.QR_CODE, 512, 512);
+                int width = bitMatrix.getWidth();
+                int height = bitMatrix.getHeight();
+                Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                    }
                 }
+                ((ImageView) findViewById(R.id.img_result_qr)).setImageBitmap(bmp);} catch (WriterException ex) {
+                ex.printStackTrace();
             }
-            ((ImageView) findViewById(R.id.img_result_qr)).setImageBitmap(bmp);} catch (WriterException ex) {
-            ex.printStackTrace();
-        }
-    }
+        }}
 
-        public String setShort_url() {
-            if (!url.isEmpty()) {
-                App.getApi().url(url).enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        short_url=(response.body());
-                    }
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        String s = getResources().getString(R.string.no_net);
-                        Toast.makeText(Send.this,s , Toast.LENGTH_SHORT).show();
-                        close();
-                    }
-                });
-                return short_url;
-            }
-            else {
-                String s = getResources().getString(R.string.inavid_url);
-                Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
-                return "";
-            }}
+    public void setShort_url() {
+        if (!url.isEmpty()) {
+            App.getApi().url(url).enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    short_url=(response.body());
+                    textView.setText(short_url);
+                    generate();
+                    share.setVisibility(View.VISIBLE);
+                }
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    String s = getResources().getString(R.string.no_net);
+                    Toast.makeText(Send.this,s , Toast.LENGTH_SHORT).show();
+                    close();
+                }
+            });
+        }
+        else {
+            String s = getResources().getString(R.string.inavid_url);
+            Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+        }}
 
     public void close(){
         this.finish();
