@@ -3,6 +3,8 @@ package ya.cube.clicker;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +17,20 @@ public class About extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
     }
-    public void onClick(View v){
-    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.github.com/cubeqw"));
-    startActivity(browserIntent);}
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.about_menu, menu);
+        return true;
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.cubeqw:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.github.com/cubeqw"));
+                startActivity(browserIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
 

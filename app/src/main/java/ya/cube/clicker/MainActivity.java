@@ -63,10 +63,15 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     short_url=(response.body());
+                    if(short_url.charAt(0)=='<'){
+                        String s = getResources().getString(R.string.inavid_url);
+                        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+                        textView.setText("");
+                    }else{
                     textView.setText(short_url);
                         generate();
                     share.setVisibility(View.VISIBLE);
-                }
+                }}
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     String s = getResources().getString(R.string.no_net);

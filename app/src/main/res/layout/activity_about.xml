@@ -42,14 +42,6 @@
         android:layout_height="wrap_content"
         android:text="@string/copyright"
         android:layout_margin="25dp"/>
-    <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:src="@drawable/cubeqw"
-        android:onClick="onClick"
-        android:layout_margin="15dp"
-        />
 </LinearLayout>
     </ScrollView>
 </LinearLayout>

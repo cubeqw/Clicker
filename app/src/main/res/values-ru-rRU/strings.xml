@@ -3,7 +3,7 @@
     <string name="app_name">Кликер</string>
     <string name="annotation">Довольно часто при общении в интернете люди пересылают друг другу ссылки. Иногда эти ссылки бывают длинными. Совсем иногда — очень длинными. Но почти всегда — слишком длинными. Для того чтобы избавиться от этой проблемы, было создано это приложение. Да, я знаю, что таких тысячи, но это же лучше!  А дальше все просто: вставляете ссылку в поле для ввода, нажимаете \"Клик\" и получаете короткий, совсем короткий URL.</string>
     <string name="short_annotation">Серьёзный укорачиватель URL</string>
-    <string name="hint">Вставте вашу ссылку</string>
+    <string name="hint">Длинная ссылка</string>
     <string name="click">Клик!✂</string>
     <string name="copyright">Основано на технологиях Яндекса</string>
     <string name="inavid_url">Ошибка: неправильная ссылка</string>
@@ -17,4 +17,5 @@
     <string name="wait">Подождите</string>
     <string name="no_camera">Дайте разрешение на камеру для сканирования QR-кода</string>
     <string name="flash">Вспышка</string>
+    <string name="git">Репозиторий на GitHub</string>
 </resources>
