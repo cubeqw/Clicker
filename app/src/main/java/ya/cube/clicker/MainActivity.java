@@ -1,5 +1,6 @@
 package ya.cube.clicker;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -8,7 +9,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         short_url=getResources().getString(R.string.wait);
     }
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEND) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
            setShort_url();
             return true;
         }
@@ -52,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     public void onClick(View v) {
+        v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim));
+        InputMethodManager inputManager = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         setShort_url();
         textView.setText(short_url);
         }
@@ -103,9 +109,11 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         }
     }
     public void onClickURL(View v){
+        v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim));
         Intent intent=new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, short_url);
+        v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim));
         startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
 
     }

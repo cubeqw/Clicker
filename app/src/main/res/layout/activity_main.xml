@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:background="@color/status_text"
     >
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,20 +26,9 @@
             android:textSize="25dp"
             android:layout_margin="15dp"
             android:inputType="textUri"
-            android:imeOptions="actionSend"
+            android:imeOptions="actionDone"
             android:layout_weight="1"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/click"
-            android:layout_margin="15dp"
-            android:id="@+id/button"
-            android:textAllCaps="false"
-            android:background="#FFFFFF"
-            android:textSize="25dp"
-            android:textColor="@color/colorPrimary"
-            android:onClick="onClick"
-            />
+
     </LinearLayout>
         <TextView
             android:layout_width="match_parent"
@@ -49,31 +39,38 @@
             android:textSize="30dp"
             android:onClick="onClickURL"
             android:textColor="@color/colorPrimary"/>
-		<Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/share"
-            android:layout_margin="15dp"
-            android:id="@+id/button_share"
-            android:textAllCaps="false"
-            android:background="#FFFFFF"
-            android:textSize="25dp"
-            android:textColor="@color/colorAccent"
-            android:onClick="onClickURL"
-			/>
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/img_result_qr"/>
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="@string/share"
+            android:layout_gravity="center"
+            android:layout_margin="15dp"
+            android:id="@+id/button_share"
+            android:textAllCaps="false"
+            android:background="@drawable/gradiant2"
+            android:textSize="25dp"
+            android:textColor="@color/status_text"
+            android:onClick="onClickURL"
+            />
     </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
+
+    <Button
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:text="@string/click"
+        android:layout_margin="15dp"
+        android:id="@+id/button"
+        android:textAllCaps="false"
+        android:background="@drawable/gradiant"
+        android:textSize="25dp"
+        android:textColor="@color/status_text"
+        android:onClick="onClick"
+        android:layout_centerHorizontal="true"
         android:gravity="center"
         android:layout_alignParentBottom="true"
-        android:text="@string/copyright"
-        android:textSize="10dp"
-        android:layout_margin="15dp"
-        android:textColor="@color/colorAccent"
         />
 </RelativeLayout>
