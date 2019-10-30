@@ -42,4 +42,5 @@ dependencies {
     implementation 'com.embarkmobile:zxing-android-minimal:1.2.1@aar'
     implementation 'me.dm7.barcodescanner:zxing:1.9'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
+    implementation files('D:\\Users\\Pavel\\Downloads\\jsoup-1.12.1.jar')
 }

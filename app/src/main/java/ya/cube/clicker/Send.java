@@ -3,6 +3,7 @@ package ya.cube.clicker;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Timer;
@@ -28,10 +33,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Send extends AppCompatActivity {
-    TextView textView;
+    TextView textView, title_view;
     String short_url="";
     String url;
     Button share;
+    String title;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +47,7 @@ public class Send extends AppCompatActivity {
         short_url=getResources().getString(R.string.wait);
         share=findViewById(R.id.button_share);
         share.setVisibility(View.INVISIBLE);
+        title_view=findViewById(R.id.title_url);
         Intent intent = getIntent();
     String action = intent.getAction();
     String type = intent.getType();
@@ -134,5 +142,32 @@ public class Send extends AppCompatActivity {
     public void close(){
         this.finish();
     }
+    class MyTask extends AsyncTask<Void, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            if(url.charAt(0)=='h'&&url.charAt(1)=='t'&&url.charAt(3)=='t'&&url.charAt(4)=='p'&&url.charAt(5)=='s'&&url.charAt(6)==':'&&url.charAt(7)=='/'&&url.charAt(8)=='/'){}
+            else{url="https://"+url;}
+            Document doc = null;
+            try {
+
+                doc = Jsoup.connect(url).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (doc!=null)
+                title = doc.title();
+
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            title_view.setText(title);
+        }
+    }
+
 }
 

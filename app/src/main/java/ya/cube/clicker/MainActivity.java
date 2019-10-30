@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -25,16 +26,22 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
     EditText editText;
-    TextView textView;
+    TextView textView, title_view;
 	Button share;
     String short_url="";
     String url;
+    String title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         editText=findViewById(R.id.url);
         editText.setOnEditorActionListener(this);
         textView=findViewById(R.id.short_url);
+        title_view=findViewById(R.id.title_url);
 		share=findViewById(R.id.button_share);
 		share.setVisibility(View.INVISIBLE);
         short_url=getResources().getString(R.string.wait);
@@ -57,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     public void onClick(View v) {
-        v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim));
         InputMethodManager inputManager = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         setShort_url();
@@ -65,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         }
 
     public void setShort_url() {
+        MyTask mt = new MyTask();
+        mt.execute();
         url=editText.getText().toString();
         if (!url.isEmpty()) {
             App.getApi().url(url).enqueue(new Callback<String>() {
@@ -79,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
                     textView.setText(short_url);
                         generate();
                     share.setVisibility(View.VISIBLE);
+
                 }}
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
@@ -111,11 +121,9 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
         }
     }
     public void onClickURL(View v){
-        v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim));
         Intent intent=new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, short_url);
-        v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim));
+        intent.putExtra(Intent.EXTRA_TEXT,title+" – "+ short_url);
         startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
 
     }
@@ -139,4 +147,31 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
 	public void close(){
 		this.finish();
 	}
+    class MyTask extends AsyncTask<Void, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            if(url.charAt(0)=='h'&&url.charAt(1)=='t'&&url.charAt(3)=='t'&&url.charAt(4)=='p'&&url.charAt(5)=='s'&&url.charAt(6)==':'&&url.charAt(7)=='/'&&url.charAt(8)=='/'){}
+            else{url="https://"+url;}
+            Document doc = null;
+            try {
+
+                doc = Jsoup.connect(url).get();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (doc!=null)
+                title = doc.title();
+
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            title_view.setText(title);
+        }
+    }
+
 }
